@@ -1,0 +1,69 @@
+---
+title: "p8105_hw1_blm2156"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+# Problem 1
+```{r}
+problem_1_df = tibble(
+  vec_numeric = rnorm(8),
+  vec_logical = vec_numeric > 0,
+  vec_character = c("hello", "hi", "hey", "day", "night", "goodbye", "bye", "goodnight"),
+  vec_factor = factor(c("low", "low", "moderate", "moderate", "moderate", "moderate", "high", "high"))
+)
+
+
+## Means of each variable in my dataframe
+mean(pull(problem_1_df, vec_numeric))
+mean(pull(problem_1_df, vec_logical))
+mean(pull(problem_1_df, vec_character))
+mean(pull(problem_1_df, vec_factor))
+```
+I am able to find the mean of my numeric vector (random sample of size 8 from a standard Normal distribution) and my logical vector (logical vector indicating whether elements of the sample are greater than 0).
+
+I am not able to find the mean of my character vector (character vector of length 8 comprised of both numeric and factor) nor my factor vector (factor vector of length 8, with 3 different factor "levels"). This is because neither vector completely contains numeric variables. Each contain some or all variables in the "text" format.  
+
+```{r, eval = FALSE}
+as.numeric(pull(problem_1_df, vec_logical))
+as.numeric(pull(problem_1_df, vec_character))
+as.numeric(pull(problem_1_df, vec_factor))
+```
+The as.numeric function converts the variables that were written in my logical and factor vectors to numeric vectors. This does explain what happens when we take the mean of the logical, character, and factor vectors. The logical vector converted our True/False answers into 1's and 0's. The as.numeric function was unable to convert my character vector into a numeric vector as every variable was text; however, if I included numeric variables in the original vector, this function would convert those numbers. My factor vector was converted into different groups. My "low" variable was converted to the number 2, my "moderate" variable was converted to the number 3, and my "high" variable was converted to the number 1. These corresponding numbers explain how R was able to produce a mean for these vectors. 
+
+```{r, eval = TRUE}
+as.numeric(pull(problem_1_df, vec_logical))*(pull(problem_1_df, vec_numeric))
+as.factor(pull(problem_1_df, vec_logical))*(pull(problem_1_df, vec_numeric))
+as.numeric(as.factor(pull(problem_1_df, vec_logical))*(pull(problem_1_df, vec_numeric)))
+```
+
+# Problem 2
+```{r}
+problem_2_df = tibble(
+  x = rnorm(500),
+  y = rnorm(500),
+  vec_logical = (x + y) > 1,
+  vec_num_p2 = as.numeric(vec_logical),
+  vec_factor_p2 = as.factor(vec_logical)
+)
+```
+
+The size of the datatset `problem_2_df` is `r nrow(problem_2_df)` rows and `r ncol(problem_2_df)` columns. 
+
+The mean is `r mean(pull(problem_2_df, x))`.
+The median is `r median(pull(problem_2_df, x))`.
+The standard deviation is `r sd(pull(problem_2_df, x))`.
+The proportion of cases for which x + y > 1 is `r mean(pull(problem_2_df, vec_logical))`.
+
+```{r}
+ggplot(problem_2_df) + geom_point(aes(x = x, y = y), color = 'blue')
+ggsave("hw1_scatter_plot1.pdf")
+
+ggplot(problem_2_df) + geom_point(aes(x = vec_num_p2 ,y = y), color = 'red')
+
+ggplot(problem_2_df) + geom_point(aes(x = vec_factor_p2 ,y = y), color = 'green')
+```
+
